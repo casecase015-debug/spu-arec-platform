@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-title mb-4 d-flex justify-content-between align-items-center">
+    <div>
+        <h3 class="fw-bold text-dark"><i class="fa-solid fa-screwdriver-wrench text-danger me-2"></i>ระบบผู้ดูแลระบบ (Admin Dashboard)</h3>
+        <p class="text-muted mb-0">จัดการข้อมูลหลังบ้าน ประกาศข่าวสาร ตารางเวร และตรวจสอบสถานะสมาชิก</p>
+    </div>
+    <span class="badge bg-danger px-3 py-2 fs-6 rounded-pill"><i class="fa-solid fa-user-shield me-1"></i> ส่วนของเจ้าหน้าที่</span>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm border-0" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bootstrap-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="content-card h-100 border-top border-primary border-4">
+            <h5 class="fw-bold text-primary mb-3"><i class="fa-solid fa-bullhorn me-2"></i>ออกประกาศ / ข่าวสารใหม่</h5>
+            <form action="/admin/add-news" method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">หัวข้อประกาศ</label>
+                    <input type="text" name="title" class="form-control" placeholder="เช่น แจ้งปิดปรับปรุงสถานีชั่วคราว, ข่าวสอบพนักงานวิทยุ" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">เนื้อหาประกาศ</label>
+                    <textarea name="content" class="form-control" rows="4" placeholder="รายละเอียดเนื้อหาที่ต้องการแจ้งให้สมาชิกทุกคนทราบ..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold"><i class="fa-solid fa-paper-plane me-2"></i>บันทึกและส่งประกาศ</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="content-card h-100 border-top border-warning border-4">
+            <h5 class="fw-bold text-warning text-dark mb-3"><i class="fa-solid fa-calendar-plus me-2"></i>จัดตั้งเวร Net Controlประจำวัน</h5>
+            <form action="/admin/add-duty" method="POST">
+                <div class="row g-2">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold small">วันที่ปฏิบัติหน้าที่</label>
+                        <input type="date" name="date" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold small">ช่วงเวลา (Time)</label>
+                        <input type="text" name="time" class="form-control" placeholder="เช่น 19:00 - 20:00" required>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">สัญญาณเรียกขาน (Callsign ควบคุมข่าย)</label>
+                    <input type="text" name="callsign" class="form-control text-uppercase" placeholder="เช่น HS1AP หรือ E20XXX" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold small">ความถี่ปฏิบัติการ (Frequency)</label>
+                    <input type="text" name="frequency" class="form-control" placeholder="เช่น 145.000 MHz หรือ 245.000 MHz" required>
+                </div>
+                <button type="submit" class="btn btn-warning w-100 fw-bold text-dark"><i class="fa-solid fa-calendar-check me-2"></i>อัปเดตตารางเวร</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="content-card border-top border-secondary border-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-users-gear text-secondary me-2"></i>ฐานข้อมูลสมาชิกหลังบ้าน</h5>
+            <div class="table-responsive" style="max-height: 350px;">
+                <table class="table table-hover align-middle small">
+                    <thead class="table-light sticky-top">
+                        <tr>
+                            <th>Callsign</th>
+                            <th>ชื่อ-นามสกุล</th>
+                            <th>เบอร์โทร</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in members %}
+                        <tr>
+                            <td class="fw-bold text-primary">{{ m.Callsign }}</td>
+                            <td>{{ m.Name }}</td>
+                            <td>{{ m.Phone }}</td>
+                            <td>
+                                <span class="badge {% if m.Status == 'ปกติ' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                    {{ m.Status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-muted">ไม่มีข้อมูลสมาชิก</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="content-card border-top border-info border-4">
+            <h5 class="fw-bold mb-3"><i class="fa-solid fa-clock-rotate-left text-info me-2"></i>ประวัติการเช็คอินห้องวิทยุ (ล่าสุด)</h5>
+            <div class="table-responsive" style="max-height: 350px;">
+                <table class="table table-hover align-middle small">
+                    <thead class="table-light sticky-top">
+                        <tr>
+                            <th>เวลา</th>
+                            <th>Callsign</th>
+                            <th>สถานะ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in checkins %}
+                        <tr>
+                            <td class="text-muted" style="font-size: 0.75rem;">{{ c.Timestamp }}</td>
+                            <td class="fw-bold text-dark">{{ c.Callsign }}</td>
+                            <td>
+                                <span class="badge {% if c.Action == 'Check-In' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ c.Action }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" class="text-center text-muted">ยังไม่มีประวัติเช็คอิน</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

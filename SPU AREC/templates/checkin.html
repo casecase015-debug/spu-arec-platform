@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-title mb-4">
+    <h3 class="fw-bold"><i class="fa-solid fa-door-open text-success me-2"></i>ระบบเช็คอินห้องวิทยุ</h3>
+    <p class="text-muted">บันทึกการเข้า-ออก และปฏิบัติงานในสถานีวิทยุสมัครเล่น</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="content-card">
+            <h5 class="fw-bold mb-4">ฟอร์มบันทึกสถานะ</h5>
+            <form action="/checkin" method="POST">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">เลือกการดำเนินการ</label>
+                    <select name="action" class="form-select form-select-lg" required>
+                        <option value="Check-In">🟢 Check-In (เข้าสถานี)</option>
+                        <option value="Check-Out">🔴 Check-Out (ออกจากสถานี)</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label fw-bold">หมายเหตุ / ภารกิจ (ถ้ามี)</label>
+                    <input type="text" name="reason" class="form-control" placeholder="เช่น เฝ้าฟังความถี่, ซ่อมบำรุงสายอากาศ">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-bold py-2"><i class="fa-solid fa-save me-2"></i>บันทึกข้อมูลลงระบบ</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

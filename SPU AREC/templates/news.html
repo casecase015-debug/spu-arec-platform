@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-title mb-4">
+    <h3 class="fw-bold"><i class="fa-solid fa-bullhorn text-danger me-2"></i>ประกาศและข่าวสาร</h3>
+    <p class="text-muted">อัปเดตประกาศสำคัญจากผู้ดูแลระบบ และข่าวสารวงการวิทยุสมัครเล่นประจำวัน</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-thumbtack text-primary me-2"></i>ประกาศจากชมรม (Admin)</h5>
+        {% for n in news %}
+        <div class="card shadow-sm border-0 mb-3 border-start border-primary border-4">
+            <div class="card-body">
+                <h6 class="card-title fw-bold text-dark mb-2">{{ n.Title }}</h6>
+                <p class="card-text text-secondary small">{{ n.Content }}</p>
+                <hr class="my-2">
+                <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+                    <span><i class="fa-regular fa-clock me-1"></i> {{ n.Timestamp }}</span>
+                    <span><i class="fa-solid fa-user-pen me-1"></i> {{ n.Author }}</span>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-light text-center py-4 shadow-sm rounded-3 text-muted">
+            <i class="fa-regular fa-folder-open fa-2x mb-2 text-light-subtle"></i>
+            <p class="mb-0 small">ยังไม่มีประกาศจากแอดมินในขณะนี้</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="col-lg-6">
+        <h5 class="fw-bold mb-3"><i class="fa-solid fa-globe text-success me-2"></i>ข่าวสารวิทยุสื่อสารล่าสุด (ดึงข้อมูลอัตโนมัติ)</h5>
+        <div class="content-card p-0 overflow-hidden">
+            <div class="list-group list-group-flush">
+                {% for ext in ext_news %}
+                <a href="{{ ext.link }}" target="_blank" class="list-group-item list-group-item-action p-3">
+                    <div class="d-flex w-100 justify-content-between align-items-center mb-1">
+                        <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 80%;">{{ ext.title }}</h6>
+                        <small class="text-success fw-medium"><i class="fa-solid fa-arrow-up-right-from-square"></i></small>
+                    </div>
+                    <small class="text-muted"><i class="fa-regular fa-calendar me-1"></i> {{ ext.pubDate }}</small>
+                </a>
+                {% else %}
+                <div class="p-4 text-center text-muted">
+                    <i class="fa-solid fa-satellite-dish fa-2x mb-2 text-light-subtle"></i>
+                    <p class="mb-0 small">ไม่สามารถดึงข้อมูลข่าวสารอัตโนมัติได้ในขณะนี้</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <small class="text-muted mt-2 d-block text-end" style="font-size: 0.7rem;">*ดึงข้อมูลอ้างอิงจาก RSS Google News Search</small>
+    </div>
+</div>
+{% endblock %}
